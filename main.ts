@@ -85,7 +85,7 @@ async function main(){
     const decryptButton = document.getElementById('de')
     const fileLabel = document.getElementById('fileLabel')
     const extname = '.ashs'
-    document.title = extname
+    document.title = extname.toUpperCase()
     await localForage.clear()
 
     if(!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))){

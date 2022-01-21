@@ -113,7 +113,7 @@ function main() {
         const decryptButton = document.getElementById('de');
         const fileLabel = document.getElementById('fileLabel');
         const extname = '.ashs';
-        document.title = extname;
+        document.title = extname.toUpperCase();
         yield localforage_1.default.clear();
         if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))) {
             yield sleep(10);
