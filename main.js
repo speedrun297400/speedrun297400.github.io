@@ -64,13 +64,16 @@ function setprogbar(params) {
     }
 }
 function checkRequirementVaild() {
-    function Invaild() {
+    function Invaild(message = '권장사양을 충족하지 않는 기기입니다.') {
         const infoDom = document.getElementById('info');
         if (infoDom !== null) {
-            infoDom.innerText = '권장사양을 충족하지 않는 기기입니다.';
+            infoDom.innerText = message;
         }
     }
-    if (((!localforage_1.default.supports(localforage_1.default.WEBSQL)) && (!localforage_1.default.supports(localforage_1.default.INDEXEDDB)))) {
+    if (window.navigator.userAgent.toLowerCase().includes('wv')) {
+        Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다');
+    }
+    else if (((!localforage_1.default.supports(localforage_1.default.WEBSQL)) && (!localforage_1.default.supports(localforage_1.default.INDEXEDDB)))) {
         Invaild();
     }
     else if (navigator.deviceMemory && (navigator.deviceMemory <= 2)) {
