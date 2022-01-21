@@ -1,0 +1,29 @@
+{
+  "name": "mvmzscrap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "watch": "watchify main.js -o pack.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.9"
+  },
+  "dependencies": {
+    "@types/aes-js": "^3.1.1",
+    "@types/path-browserify": "^1.0.0",
+    "aes-js": "^3.1.2",
+    "bson": "^4.6.1",
+    "glob": "^7.2.0",
+    "localforage": "^1.10.0",
+    "milligram": "^1.4.1",
+    "path-browserify": "^1.0.1",
+    "sha3": "^2.1.4",
+    "sox-stream": "^2.0.6",
+    "watchify": "^4.0.0",
+    "webp-converter": "^2.3.3"
+  }
+}
