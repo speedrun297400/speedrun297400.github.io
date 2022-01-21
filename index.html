@@ -5,22 +5,22 @@
 </head>
 <body>
     <link rel="icon" href="https://www.nicepng.com/png/full/155-1554858_earth-world-wide-web-circle-connect-round-svg.png">
-    <div class="topmar"></div>
+    <div class="topmar" id="topmar"></div>
     <div class="outer">
         <div class="filebox">
-            <label for="file" id="fileLabel">파일 선택</label>
+            <label for="file" id="fileLabel" class="ele">파일 선택</label>
             <input type="file" id="file"><br>
         </div>
     </div>
     <div class="outer">
-        <input type="text" placeholder="비밀번호" id="password"><br>
+        <input type="text" placeholder="비밀번호" id="password" class="ele"><br>
     </div>
     <div class="outer">
-        <button id="en">암호화</button>
-        <button id="de">복호화</button>
+        <button id="en" class="ele">암호화</button>
+        <button id="de" class="ele">복호화</button>
     </div>
     <div class="outer">
-        <progress value="0" max="1"></progress>
+        <progress value="0" max="1" class="ele"></progress>
     </div>
     <div class="outer">
         <h3 id="info"></h3>
@@ -28,6 +28,10 @@
     <script src="pack.js"></script>
 </body>
 <style>
+    body{
+        overflow-y: hidden;
+        overflow-x: hidden !important;
+    }
     :root {
         --sub-width: calc(var(--main-width) / 2 - 10px);
     }
@@ -67,6 +71,7 @@
         border-radius: .25em;
         width: var(--main-width);
         text-align: center;
+        vertical-align: middle;
     }
     progress{
         width: var(--main-width);

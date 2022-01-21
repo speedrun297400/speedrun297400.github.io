@@ -45,17 +45,33 @@ function checkRequirementVaild() {
     if (((!localForage.supports(localForage.WEBSQL)) && (!localForage.supports(localForage.INDEXEDDB)))){
         Invaild()
     }
-    if(navigator.deviceMemory && (navigator.deviceMemory <= 2)){
+    else if(navigator.deviceMemory && (navigator.deviceMemory <= 2)){
         Invaild()
     }
     const root = document.querySelector<HTMLElement>(':root')
     if(root){
         if(window.screen.width < window.screen.height){
-            root.style.setProperty('--main-width', '70vw');
+            console.log('big')
+            root.style.setProperty('--main-width', '90vw');
+            const liArray: HTMLElement[] = Array.prototype.slice.call(document.querySelectorAll(".ele"));
+            const topMar = document.getElementById('topmar')
+            for (const i in liArray){
+                liArray[i].style.fontSize = '40px'
+                liArray[i].style.height = '10vh'
+            }
+            if(topMar){
+                topMar.style.marginTop = '10vh'
+                console.log('bigger')
+
+            }
         }
         else{
+            console.log('smol')
             root.style.setProperty('--main-width', '40vw');
         }
+    }
+    else{
+        console.log('smol')
     }
 }
 checkRequirementVaild()
@@ -68,9 +84,6 @@ async function main(){
     const extname = '.ashs'
     document.title = extname
     await localForage.clear()
-    window.onerror = function(message) {
-        alert(`오류가 발생했습니다: ${message}`)
-    };
 
     if(!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))){
         await sleep(10)
