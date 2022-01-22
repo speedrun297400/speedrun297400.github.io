@@ -29,9 +29,12 @@ const downloadBlob = (data:Uint8Array[] ,fileName:string, mimeType:string='appli
 }
 
 function setprogbar(params:number) {
-    const progbar = document.querySelector('progress')
-    if (progbar !== null){
-        progbar.value = params
+    try {
+        const progbar = document.querySelector('progress')
+        if (progbar !== null){
+            progbar.value = params
+        }   
+    } catch (error) {
     }
 }
 

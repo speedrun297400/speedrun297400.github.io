@@ -58,9 +58,13 @@ const downloadBlob = (data, fileName, mimeType = 'application/octet-stream') => 
     setTimeout(() => window.URL.revokeObjectURL(url), 1000);
 };
 function setprogbar(params) {
-    const progbar = document.querySelector('progress');
-    if (progbar !== null) {
-        progbar.value = params;
+    try {
+        const progbar = document.querySelector('progress');
+        if (progbar !== null) {
+            progbar.value = params;
+        }
+    }
+    catch (error) {
     }
 }
 function checkRequirementVaild() {
