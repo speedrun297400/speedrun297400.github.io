@@ -1,5 +1,5 @@
 git add .
-git commit -m "다운 개선"
+git commit -m "Add Icon"
 git push -u origin main
 
 
