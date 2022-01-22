@@ -1,5 +1,5 @@
 git add .
-git commit -m "최적화2"
+git commit -m "package.json 라이센스 맞춤"
 git push -u origin main
 
 
