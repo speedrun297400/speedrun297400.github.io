@@ -1,5 +1,5 @@
 git add .
-git commit -m "console 수정"
+git commit -m "console 수정 again"
 git push -u origin main
 
 
