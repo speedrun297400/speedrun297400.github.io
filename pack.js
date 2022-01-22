@@ -68,9 +68,6 @@ function setprogbar(params) {
     catch (error) {
         console.log(error);
         const progbar = document.querySelector('progress');
-        if (progbar !== null) {
-            progbar.value = progbar.value ;
-        }
     }
 }
 function checkRequirementVaild() {
