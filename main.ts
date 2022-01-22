@@ -13,19 +13,23 @@ const downloadBlob = (data:Uint8Array[] ,fileName:string, mimeType:string='appli
     const downloadURL = (data:string, fileName:string) => {
         console.log('downloading URL')
         const a = document.createElement('a')
+        const b = document.createElement('div')
+        b.classList.add('outer')
         a.href = data
         a.download = fileName
-        document.body.appendChild(a)
-        a.style.display = 'none'
+        const divv = document.getElementById('cas') ?? document.body
+        divv.appendChild(b)
+        b.appendChild(a)
+        a.innerText = `${fileName}: 다운로드 되지 않으면 이 링크를 클릭하세요`
         a.click()
-        a.remove()
+        console.log('downloaded?')
     }
     const blob = new Blob(data, {
         type: mimeType
     })
     const url = window.URL.createObjectURL(blob)
     downloadURL(url, fileName)
-    setTimeout(() => window.URL.revokeObjectURL(url), 1000)
+    setTimeout(() => window.URL.revokeObjectURL(url), 100000)
 }
 
 function setprogbar(params:number) {
@@ -125,6 +129,10 @@ async function main(){
         const password = passwordDom.value
         let chunks = -1
         let chunkList:Uint8Array[] = []
+        const divv = document.getElementById('cas')
+        if(divv !== null){
+            divv.innerHTML = ''
+        }
         function parseFile(file: File) {
             return new Promise<Uint8Array[]>((callback)=>{
                 if(fileIsHere === false || fileInputDom.files === null){
