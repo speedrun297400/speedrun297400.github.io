@@ -11,6 +11,7 @@ function sleep(ms:number) {
 
 const downloadBlob = (data:Uint8Array[] ,fileName:string, mimeType:string='application/octet-stream') => {
     const downloadURL = (data:string, fileName:string) => {
+        console.log('downloading URL')
         const a = document.createElement('a')
         a.href = data
         a.download = fileName
@@ -217,6 +218,7 @@ async function main(){
             }
             await localForage.clear()
         }
+        console.log('complete')
         working = false
     }
     encryptButton.onclick = () => {Crypt(true)}

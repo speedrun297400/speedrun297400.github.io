@@ -41,6 +41,7 @@ function sleep(ms) {
 }
 const downloadBlob = (data, fileName, mimeType = 'application/octet-stream') => {
     const downloadURL = (data, fileName) => {
+        console.log('downloading URL');
         const a = document.createElement('a');
         a.href = data;
         a.download = fileName;
@@ -250,6 +251,7 @@ function main() {
                     }
                     yield localforage_1.default.clear();
                 }
+                console.log('complete');
                 working = false;
             });
         }
