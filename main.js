@@ -197,22 +197,30 @@ function main() {
                         function continue_reading() {
                             var _a;
                             return __awaiter(this, void 0, void 0, function* () {
-                                if (offset >= file.size) {
-                                    for (let i = 0; i < chunks + 1; i++) {
-                                        console.log(i);
-                                        let got = (_a = (yield localforage_1.default.getItem(`filedata${i}`))) !== null && _a !== void 0 ? _a : new Uint8Array();
-                                        chunkList.push(got);
-                                        got = new Uint8Array();
-                                        setprogbar(1 + (i / chunks));
+                                try {
+                                    if (offset >= file.size) {
+                                        for (let i = 0; i < chunks + 1; i++) {
+                                            console.log(i);
+                                            let got = (_a = (yield localforage_1.default.getItem(`filedata${i}`))) !== null && _a !== void 0 ? _a : new Uint8Array();
+                                            chunkList.push(got);
+                                            got = new Uint8Array();
+                                            setprogbar(1 + (i / chunks));
+                                        }
+                                        callback(chunkList);
+                                        return;
                                     }
-                                    callback(chunkList);
-                                    return;
+                                    let slice = file.slice(offset, offset + chunk);
+                                    chunks += 1;
+                                    setprogbar(offset / file.size);
+                                    console.log(`${offset} / ${file.size} | ${chunks} | ${offset / file.size * 100}%`);
+                                    fr.readAsArrayBuffer(slice);
                                 }
-                                let slice = file.slice(offset, offset + chunk);
-                                chunks += 1;
-                                setprogbar(offset / file.size);
-                                console.log(`${offset} / ${file.size} | ${chunks} | ${offset / file.size * 100}%`);
-                                fr.readAsArrayBuffer(slice);
+                                catch (error) {
+                                    console.error(error);
+                                    localforage_1.default.clear();
+                                    alert('오류가 발생했습니다');
+                                    working = false;
+                                }
                             });
                         }
                     });

@@ -165,22 +165,29 @@ async function main(){
                 startReading()
 
                 async function continue_reading() {
-                    if (offset >= file.size) {
-                        for(let i=0;i<chunks+1;i++){
-                            console.log(i)
-                            let got:Uint8Array = (await localForage.getItem(`filedata${i}`)) ?? new Uint8Array()
-                            chunkList.push(got)
-                            got = new Uint8Array()
-                            setprogbar(1 + (i/chunks))
+                    try {
+                        if (offset >= file.size) {
+                            for(let i=0;i<chunks+1;i++){
+                                console.log(i)
+                                let got:Uint8Array = (await localForage.getItem(`filedata${i}`)) ?? new Uint8Array()
+                                chunkList.push(got)
+                                got = new Uint8Array()
+                                setprogbar(1 + (i/chunks))
+                            }
+                            callback(chunkList);
+                            return;
                         }
-                        callback(chunkList);
-                        return;
+                        let slice = file.slice(offset, offset + chunk);
+                        chunks += 1
+                        setprogbar(offset/file.size)
+                        console.log(`${offset} / ${file.size} | ${chunks} | ${offset/file.size*100}%`)
+                        fr.readAsArrayBuffer(slice);   
+                    } catch (error) {
+                        console.error(error)
+                        localForage.clear()
+                        alert('오류가 발생했습니다')
+                        working = false
                     }
-                    let slice = file.slice(offset, offset + chunk);
-                    chunks += 1
-                    setprogbar(offset/file.size)
-                    console.log(`${offset} / ${file.size} | ${chunks} | ${offset/file.size*100}%`)
-                    fr.readAsArrayBuffer(slice);
                 }
             })
         }
