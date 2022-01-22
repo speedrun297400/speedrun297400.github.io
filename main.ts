@@ -156,13 +156,14 @@ async function main(){
                         else{
                             temp = crypo.Decrypt(new Uint8Array(fr.result), password)
                         }
+                        console.log('Setting to localforage')
                         await localForage.setItem(`filedata${chunks}`, temp);
                         offset += chunk;
                         temp = new Uint8Array()
     
                         continue_reading();   
                     } catch (error) {
-                        console.error(error)
+                        console.log(error)
                         localForage.clear()
                         alert('오류가 발생했습니다')
                         working = false
@@ -196,9 +197,9 @@ async function main(){
                         console.log(`${offset} / ${file.size} | ${chunks} | ${offset/file.size*100}%`)
                         fr.readAsArrayBuffer(slice);   
                     } catch (error) {
-                        console.error(error)
+                        console.log(error)
                         localForage.clear()
-                        alert('오류가 발생했습니다')
+                        alert('파일을 합치는 데 오류가 발생했습니다\nRAM이 부족합니다')
                         working = false
                     }
                 }

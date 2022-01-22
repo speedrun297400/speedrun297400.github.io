@@ -1,5 +1,5 @@
 git add .
-git commit -m "package.json 라이센스 맞춤"
+git commit -m "console 수정"
 git push -u origin main
 
 
