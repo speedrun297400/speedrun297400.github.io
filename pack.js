@@ -38656,7 +38656,6 @@ function config (name) {
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],203:[function(require,module,exports){
-(function (Buffer){(function (){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -38671,7 +38670,7 @@ function hashKey(params) {
     const key = new sha3_1.default(256);
     key.update(params);
     key.update(key.digest.toString() + key);
-    return Buffer.from(key.digest());
+    return key.digest();
 }
 function Encrypt(file, key) {
     const salt = (0, crypto_1.randomBytes)(16);
@@ -38695,5 +38694,4 @@ function Decrypt(file, key) {
 }
 exports.Decrypt = Decrypt;
 
-}).call(this)}).call(this,require("buffer").Buffer)
-},{"aes-js":2,"bson":65,"buffer":64,"crypto":74,"sha3":175}]},{},[1]);
+},{"aes-js":2,"bson":65,"crypto":74,"sha3":175}]},{},[1]);

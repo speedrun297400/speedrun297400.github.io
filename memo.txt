@@ -1,5 +1,5 @@
 git add .
-git commit -m "Add Icon"
+git commit -m "최적화"
 git push -u origin main
 
 

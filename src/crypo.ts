@@ -7,7 +7,7 @@ function hashKey(params:string): Buffer {
     const key = new SHA3(256)
     key.update(params)
     key.update(key.digest.toString() + key)
-    return Buffer.from(key.digest())
+    return key.digest()
 }
 
 export function Encrypt(file:Uint8Array, key:string): Uint8Array{

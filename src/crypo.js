@@ -12,7 +12,7 @@ function hashKey(params) {
     const key = new sha3_1.default(256);
     key.update(params);
     key.update(key.digest.toString() + key);
-    return Buffer.from(key.digest());
+    return key.digest();
 }
 function Encrypt(file, key) {
     const salt = (0, crypto_1.randomBytes)(16);
