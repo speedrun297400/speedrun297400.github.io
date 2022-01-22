@@ -53,7 +53,7 @@ function checkRequirementVaild() {
     if(window.navigator.userAgent.toLowerCase().includes('wv')){
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다')
     }
-    else if (((!localForage.supports(localForage.WEBSQL)) && (!localForage.supports(localForage.INDEXEDDB)))){
+    else if ((!localForage.supports(localForage.INDEXEDDB)) || (!localForage.supports(localForage.WEBSQL))){
         Invaild()
     }
     else if(navigator.deviceMemory && (navigator.deviceMemory <= 2)){

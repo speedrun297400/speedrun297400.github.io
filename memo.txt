@@ -1,5 +1,5 @@
 git add .
-git commit -m "최적화"
+git commit -m "최적화2"
 git push -u origin main
 
 
