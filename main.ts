@@ -171,6 +171,7 @@ async function main(){
                             let got:Uint8Array = (await localForage.getItem(`filedata${i}`)) ?? new Uint8Array()
                             chunkList.push(got)
                             got = new Uint8Array()
+                            setprogbar(1 + (i/chunks))
                         }
                         callback(chunkList);
                         return;

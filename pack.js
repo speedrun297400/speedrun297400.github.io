@@ -204,9 +204,8 @@ function main() {
                                         let got = (_a = (yield localforage_1.default.getItem(`filedata${i}`))) !== null && _a !== void 0 ? _a : new Uint8Array();
                                         chunkList.push(got);
                                         got = new Uint8Array();
-                                        setprogbar(1 + ((i / chunks) / 10));
+                                        setprogbar(1 + (i / chunks));
                                     }
-                                    setprogbar(1.1);
                                     callback(chunkList);
                                     return;
                                 }
