@@ -36,7 +36,6 @@ const crypo = __importStar(require("./src/crypo"));
 const localforage_1 = __importDefault(require("localforage"));
 const path_browserify_1 = __importDefault(require("path-browserify"));
 let fileIsHere = false;
-let fname = '';
 let working = false;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -128,8 +127,12 @@ function main() {
             if (fileInputDom.files.length < 0) {
                 return;
             }
-            fname = fileInputDom.files[0].name;
-            fileLabel.innerText = fname;
+            if (fileInputDom.files.length > 1) {
+                fileLabel.innerText = `${fileInputDom.files[0].name} 포함 총 ${fileInputDom.files.length}개의 파일`;
+            }
+            else {
+                fileLabel.innerText = fileInputDom.files[0].name;
+            }
             fileIsHere = true;
         };
         function Crypt(isEncrypt = true) {
@@ -146,12 +149,11 @@ function main() {
                 const password = passwordDom.value;
                 let chunks = -1;
                 let chunkList = [];
-                function parseFile() {
+                function parseFile(file) {
                     return new Promise((callback) => {
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;
                         }
-                        const file = fileInputDom.files[0];
                         let chunk = 10240000;
                         if (!isEncrypt) {
                             chunk += 43;
@@ -202,7 +204,9 @@ function main() {
                                         let got = (_a = (yield localforage_1.default.getItem(`filedata${i}`))) !== null && _a !== void 0 ? _a : new Uint8Array();
                                         chunkList.push(got);
                                         got = new Uint8Array();
+                                        setprogbar(1 + ((i / chunks) / 10));
                                     }
+                                    setprogbar(1.1);
                                     callback(chunkList);
                                     return;
                                 }
@@ -215,26 +219,31 @@ function main() {
                         }
                     });
                 }
-                if (isEncrypt && path_browserify_1.default.parse(fname).ext === extname) {
-                    if (!window.confirm('암호화하려는 파일이 이미 암호화 되어있습니다.\n정말 암호화하시겠습니까?')) {
-                        working = false;
-                        return;
+                for (let i = 0; i < fileInputDom.files.length; i++) {
+                    const fname = fileInputDom.files[i].name;
+                    if (fileInputDom.files[i] === undefined) {
+                        window.alert('파일을 읽는데 실패하였습니다. 새로고침 후 다시 시도해 주세요');
+                        continue;
                     }
+                    if (isEncrypt && path_browserify_1.default.parse(fname).ext === extname) {
+                        if (!window.confirm('암호화하려는 파일이 이미 암호화 되어있습니다.\n정말 암호화하시겠습니까?')) {
+                            continue;
+                        }
+                    }
+                    if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname) {
+                        window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.');
+                        continue;
+                    }
+                    const datas = yield parseFile(fileInputDom.files[i]);
+                    console.log('downloading..');
+                    if (isEncrypt) {
+                        downloadBlob(datas, `${fname}${extname}`);
+                    }
+                    else {
+                        downloadBlob(datas, `${path_browserify_1.default.parse(fname).name}`);
+                    }
+                    yield localforage_1.default.clear();
                 }
-                if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname) {
-                    window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.');
-                    working = false;
-                    return;
-                }
-                const datas = yield parseFile();
-                console.log('downloading..');
-                if (isEncrypt) {
-                    downloadBlob(datas, `${fname}${extname}`);
-                }
-                else {
-                    downloadBlob(datas, `${path_browserify_1.default.parse(fname).name}`);
-                }
-                yield localforage_1.default.clear();
                 working = false;
             });
         }

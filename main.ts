@@ -3,7 +3,6 @@ import localForage from "localforage"
 import path from "path-browserify"
 
 let fileIsHere = false
-let fname = ''
 let working = false
 
 function sleep(ms:number) {
@@ -100,8 +99,12 @@ async function main(){
         if(fileInputDom.files.length < 0){
             return
         }
-        fname = fileInputDom.files[0].name
-        fileLabel.innerText = fname
+        if(fileInputDom.files.length > 1){
+            fileLabel.innerText = `${fileInputDom.files[0].name} 포함 총 ${fileInputDom.files.length}개의 파일`
+        }
+        else{
+            fileLabel.innerText = fileInputDom.files[0].name
+        }
         fileIsHere = true
     }
     async function Crypt(isEncrypt:boolean = true) {
@@ -117,12 +120,11 @@ async function main(){
         const password = passwordDom.value
         let chunks = -1
         let chunkList:Uint8Array[] = []
-        function parseFile() {
+        function parseFile(file: File) {
             return new Promise<Uint8Array[]>((callback)=>{
                 if(fileIsHere === false || fileInputDom.files === null){
                     return
                 }
-                const file = fileInputDom.files[0]
                 let chunk = 10240000;
                 if(!isEncrypt){
                     chunk += 43
@@ -181,28 +183,32 @@ async function main(){
                 }
             })
         }
-        if(isEncrypt && path.parse(fname).ext === extname){
-            if(!window.confirm('암호화하려는 파일이 이미 암호화 되어있습니다.\n정말 암호화하시겠습니까?')){
-                working = false
-                return
+        for(let i=0;i<fileInputDom.files.length;i++){
+            const fname = fileInputDom.files[i].name
+            if(fileInputDom.files[i] === undefined){
+                window.alert('파일을 읽는데 실패하였습니다. 새로고침 후 다시 시도해 주세요')
+                continue
             }
+            if(isEncrypt && path.parse(fname).ext === extname){
+                if(!window.confirm('암호화하려는 파일이 이미 암호화 되어있습니다.\n정말 암호화하시겠습니까?')){
+                    continue
+                }
+            }
+            if((!isEncrypt) && path.parse(fname).ext !== extname){
+                window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.')
+                continue
+            }
+    
+            const datas = await parseFile(fileInputDom.files[i])
+            console.log('downloading..')
+            if(isEncrypt){
+                downloadBlob(datas, `${fname}${extname}`)
+            }
+            else{
+                downloadBlob(datas, `${path.parse(fname).name}`)
+            }
+            await localForage.clear()
         }
-        if((!isEncrypt) && path.parse(fname).ext !== extname){
-            window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.')
-            working = false
-            return
-        }
-
-
-        const datas = await parseFile()
-        console.log('downloading..')
-        if(isEncrypt){
-            downloadBlob(datas, `${fname}${extname}`)
-        }
-        else{
-            downloadBlob(datas, `${path.parse(fname).name}`)
-        }
-        await localForage.clear()
         working = false
     }
     encryptButton.onclick = () => {Crypt(true)}
