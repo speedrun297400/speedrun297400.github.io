@@ -42,6 +42,7 @@ function sleep(ms) {
 }
 const downloadBlob = (data, fileName, mimeType = 'application/octet-stream') => {
     const downloadURL = (data, fileName) => {
+        console.log('downloading URL');
         const a = document.createElement('a');
         a.href = data;
         a.download = fileName;
@@ -58,9 +59,18 @@ const downloadBlob = (data, fileName, mimeType = 'application/octet-stream') => 
     setTimeout(() => window.URL.revokeObjectURL(url), 1000);
 };
 function setprogbar(params) {
-    const progbar = document.querySelector('progress');
-    if (progbar !== null) {
-        progbar.value = params;
+    try {
+        const progbar = document.querySelector('progress');
+        if (progbar !== null) {
+            progbar.value = params;
+        }
+    }
+    catch (error) {
+        console.log(error);
+        const progbar = document.querySelector('progress');
+        if (progbar !== null) {
+            progbar.value = progbar.value ;
+        }
     }
 }
 function checkRequirementVaild() {
@@ -251,6 +261,7 @@ function main() {
                     }
                     yield localforage_1.default.clear();
                 }
+                console.log('complete');
                 working = false;
             });
         }
