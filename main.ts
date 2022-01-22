@@ -35,6 +35,7 @@ function setprogbar(params:number) {
             progbar.value = params
         }   
     } catch (error) {
+        console.log(error)
     }
 }
 

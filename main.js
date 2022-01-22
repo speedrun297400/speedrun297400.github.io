@@ -65,6 +65,7 @@ function setprogbar(params) {
         }
     }
     catch (error) {
+        console.log(error);
     }
 }
 function checkRequirementVaild() {
