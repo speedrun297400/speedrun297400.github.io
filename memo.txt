@@ -1,5 +1,5 @@
 git add .
-git commit -m "fix html"
+git commit -m "fix progress bar"
 git push -u origin main
 
 

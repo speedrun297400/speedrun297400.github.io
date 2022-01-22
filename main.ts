@@ -175,6 +175,7 @@ async function main(){
                 async function continue_reading() {
                     try {
                         if (offset >= file.size) {
+                            setprogbar(1)
                             callback(chunkList);
                             return;
                         }

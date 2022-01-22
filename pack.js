@@ -209,6 +209,7 @@ function main() {
                             return __awaiter(this, void 0, void 0, function* () {
                                 try {
                                     if (offset >= file.size) {
+                                        setprogbar(1);
                                         callback(chunkList);
                                         return;
                                     }
@@ -885,10 +886,10 @@ main();
         if (typeof(initialValue) === 'number') {
             this._counter = createArray(16);
             this.setValue(initialValue);
-
         } else {
             this.setBytes(initialValue);
         }
+        console.log(this._counter)
     }
 
     Counter.prototype.setValue = function(value) {
@@ -35837,10 +35838,11 @@ function hashKey(params) {
     key.update(key.digest.toString() + key);
     return key.digest();
 }
+const ctr = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5]);
 function Encrypt(file, key) {
     const salt = (0, crypto_1.randomBytes)(16);
     const keys = hashKey(key + salt.toString('base64'));
-    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(5));
+    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(ctr));
     const returnFile = aesCtr.encrypt(file);
     return (0, bson_1.serialize)({ data: returnFile, salt: salt });
 }
@@ -35853,7 +35855,7 @@ function Decrypt(file, key) {
     const MainFile = f.data.buffer;
     const salt = f.salt.buffer;
     const keys = hashKey(key + salt.toString('base64'));
-    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(5));
+    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(ctr));
     const returnFile = aesCtr.decrypt(MainFile);
     return returnFile;
 }

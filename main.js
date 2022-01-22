@@ -208,6 +208,7 @@ function main() {
                             return __awaiter(this, void 0, void 0, function* () {
                                 try {
                                     if (offset >= file.size) {
+                                        setprogbar(1);
                                         callback(chunkList);
                                         return;
                                     }

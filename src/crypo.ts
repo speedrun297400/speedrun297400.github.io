@@ -10,10 +10,12 @@ function hashKey(params:string): Buffer {
     return key.digest()
 }
 
-export function Encrypt(file:Uint8Array, key:string): Uint8Array{
+const ctr = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5])
+
+export function Encrypt(file:Uint8Array, key:string){
     const salt = randomBytes(16)
     const keys = hashKey(key + salt.toString('base64'))
-    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(5));
+    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(ctr));
     const returnFile = aesCtr.encrypt(file)
     return serialize({data: returnFile, salt:salt})
 }
@@ -26,7 +28,7 @@ export function Decrypt(file:Uint8Array, key:string): Uint8Array{
     const MainFile:Buffer = f.data.buffer
     const salt:Buffer = f.salt.buffer
     const keys = hashKey(key + salt.toString('base64'))
-    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(5));
+    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(ctr));
     const returnFile = aesCtr.decrypt(MainFile)
     return returnFile
 }
