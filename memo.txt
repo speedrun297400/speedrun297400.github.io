@@ -1,5 +1,5 @@
 git add .
-git commit -m "console 수정 again"
+git commit -m "localforage drop"
 git push -u origin main
 
 

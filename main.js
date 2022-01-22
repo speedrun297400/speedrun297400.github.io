@@ -32,7 +32,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypo = __importStar(require("./src/crypo"));
-const localforage_1 = __importDefault(require("localforage"));
 const path_browserify_1 = __importDefault(require("path-browserify"));
 let fileIsHere = false;
 let working = false;
@@ -83,9 +82,6 @@ function checkRequirementVaild() {
     if (window.navigator.userAgent.toLowerCase().includes('wv')) {
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다');
     }
-    else if ((!localforage_1.default.supports(localforage_1.default.INDEXEDDB)) || (!localforage_1.default.supports(localforage_1.default.WEBSQL))) {
-        Invaild();
-    }
     else if (navigator.deviceMemory && (navigator.deviceMemory <= 2)) {
         Invaild();
     }
@@ -124,7 +120,6 @@ function main() {
         const fileLabel = document.getElementById('fileLabel');
         const extname = '.ashs';
         document.title = extname.toUpperCase();
-        yield localforage_1.default.clear();
         if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))) {
             yield sleep(10);
             main();
@@ -187,15 +182,14 @@ function main() {
                                     else {
                                         temp = crypo.Decrypt(new Uint8Array(fr.result), password);
                                     }
-                                    console.log('Setting to localforage');
-                                    yield localforage_1.default.setItem(`filedata${chunks}`, temp);
+                                    console.log('Dumping');
+                                    chunkList.push(temp);
                                     offset += chunk;
                                     temp = new Uint8Array();
                                     continue_reading();
                                 }
                                 catch (error) {
                                     console.log(error);
-                                    localforage_1.default.clear();
                                     alert('오류가 발생했습니다');
                                     working = false;
                                 }
@@ -211,17 +205,9 @@ function main() {
                         }
                         startReading();
                         function continue_reading() {
-                            var _a;
                             return __awaiter(this, void 0, void 0, function* () {
                                 try {
                                     if (offset >= file.size) {
-                                        for (let i = 0; i < chunks + 1; i++) {
-                                            console.log(i);
-                                            let got = (_a = (yield localforage_1.default.getItem(`filedata${i}`))) !== null && _a !== void 0 ? _a : new Uint8Array();
-                                            chunkList.push(got);
-                                            got = new Uint8Array();
-                                            setprogbar(1 + (i / chunks));
-                                        }
                                         callback(chunkList);
                                         return;
                                     }
@@ -233,7 +219,6 @@ function main() {
                                 }
                                 catch (error) {
                                     console.log(error);
-                                    localforage_1.default.clear();
                                     alert('파일을 합치는 데 오류가 발생했습니다\nRAM이 부족합니다');
                                     working = false;
                                 }
@@ -264,7 +249,6 @@ function main() {
                     else {
                         downloadBlob(datas, `${path_browserify_1.default.parse(fname).name}`);
                     }
-                    yield localforage_1.default.clear();
                 }
                 console.log('complete');
                 working = false;

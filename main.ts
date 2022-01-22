@@ -1,5 +1,4 @@
 import * as crypo from "./src/crypo"
-import localForage from "localforage"
 import path from "path-browserify"
 
 let fileIsHere = false
@@ -53,9 +52,6 @@ function checkRequirementVaild() {
     if(window.navigator.userAgent.toLowerCase().includes('wv')){
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다')
     }
-    else if ((!localForage.supports(localForage.INDEXEDDB)) || (!localForage.supports(localForage.WEBSQL))){
-        Invaild()
-    }
     else if(navigator.deviceMemory && (navigator.deviceMemory <= 2)){
         Invaild()
     }
@@ -94,7 +90,6 @@ async function main(){
     const fileLabel = document.getElementById('fileLabel')
     const extname = '.ashs'
     document.title = extname.toUpperCase()
-    await localForage.clear()
 
     if(!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))){
         await sleep(10)
@@ -156,15 +151,14 @@ async function main(){
                         else{
                             temp = crypo.Decrypt(new Uint8Array(fr.result), password)
                         }
-                        console.log('Setting to localforage')
-                        await localForage.setItem(`filedata${chunks}`, temp);
+                        console.log('Dumping')
+                        chunkList.push(temp)
                         offset += chunk;
                         temp = new Uint8Array()
     
                         continue_reading();   
                     } catch (error) {
                         console.log(error)
-                        localForage.clear()
                         alert('오류가 발생했습니다')
                         working = false
                     }
@@ -181,13 +175,6 @@ async function main(){
                 async function continue_reading() {
                     try {
                         if (offset >= file.size) {
-                            for(let i=0;i<chunks+1;i++){
-                                console.log(i)
-                                let got:Uint8Array = (await localForage.getItem(`filedata${i}`)) ?? new Uint8Array()
-                                chunkList.push(got)
-                                got = new Uint8Array()
-                                setprogbar(1 + (i/chunks))
-                            }
                             callback(chunkList);
                             return;
                         }
@@ -198,7 +185,6 @@ async function main(){
                         fr.readAsArrayBuffer(slice);   
                     } catch (error) {
                         console.log(error)
-                        localForage.clear()
                         alert('파일을 합치는 데 오류가 발생했습니다\nRAM이 부족합니다')
                         working = false
                     }
@@ -229,7 +215,6 @@ async function main(){
             else{
                 downloadBlob(datas, `${path.parse(fname).name}`)
             }
-            await localForage.clear()
         }
         console.log('complete')
         working = false
