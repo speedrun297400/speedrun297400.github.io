@@ -221,7 +221,7 @@ function main() {
                                 }
                                 catch (error) {
                                     console.log(error);
-                                    alert('파일을 합치는 데 오류가 발생했습니다\nRAM이 부족합니다');
+                                    alert('파일을 합치는 데 오류가 발생했습니다');
                                     working = false;
                                 }
                             });
@@ -889,7 +889,6 @@ main();
         } else {
             this.setBytes(initialValue);
         }
-        console.log(this._counter)
     }
 
     Counter.prototype.setValue = function(value) {
