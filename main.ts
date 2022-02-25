@@ -88,14 +88,20 @@ async function main(){
     const encryptButton = document.getElementById('en')
     const decryptButton = document.getElementById('de')
     const fileLabel = document.getElementById('fileLabel')
+    const winLink = document.getElementById('win')
     const extname = '.ashs'
     document.title = extname.toUpperCase()
 
-    if(!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null))){
+    if(!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null && winLink !== null))){
         await sleep(10)
         main()
         return
     }
+    if(window.navigator.userAgent.toLowerCase().includes('win')){
+        winLink.style.visibility = 'visible'
+        winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`)
+    }
+
     fileInputDom.onchange = () => {
         if(fileInputDom.files === null){
             return
@@ -223,6 +229,10 @@ async function main(){
     encryptButton.onclick = () => {Crypt(true)}
     decryptButton.onclick = () => {Crypt(false)}
 
+}
+
+function isASCII(str:string) {
+    return /^[\x00-\x7F]*$/.test(str);
 }
 
 main()
