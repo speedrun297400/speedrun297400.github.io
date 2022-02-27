@@ -82,7 +82,7 @@ function checkRequirementVaild() {
     if (window.navigator.userAgent.toLowerCase().includes('wv')) {
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다');
     }
-    else if (navigator.deviceMemory && (navigator.deviceMemory <= 2)) {
+    else if (navigator.deviceMemory && (navigator.deviceMemory <= 4)) {
         Invaild();
     }
     const root = document.querySelector(':root');

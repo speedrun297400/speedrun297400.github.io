@@ -1,5 +1,5 @@
 git add .
-git commit -m "add link to windows version"
+git commit -m "windows version"
 git push -u origin main
 
 
