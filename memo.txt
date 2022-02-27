@@ -1,5 +1,5 @@
 git add .
-git commit -m "windows version"
+git commit -m "updated memory safety"
 git push -u origin main
 
 

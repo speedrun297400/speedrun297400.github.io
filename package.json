@@ -16,6 +16,7 @@
     "@types/aes-js": "^3.1.1",
     "@types/modernizr": "^3.5.3",
     "@types/path-browserify": "^1.0.0",
+    "@types/streamsaver": "^2.0.1",
     "aes-js": "^3.1.2",
     "bson": "^4.6.1",
     "glob": "^7.2.0",
@@ -25,6 +26,7 @@
     "path-browserify": "^1.0.1",
     "sha3": "^2.1.4",
     "sox-stream": "^2.0.6",
+    "streamsaver": "^2.0.6",
     "watchify": "^4.0.0"
   }
 }

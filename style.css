@@ -63,16 +63,6 @@ progress{
 }
 #win{
   position: absolute;
-  top: 0px;
-  width: 100vw;
-  font-size: 36px;
-  font-weight: bold;
-  visibility: hidden;
-  text-align: center;
-  background-color: white;
-  border-bottom: #999 solid;
-}
-
-#win l{
-  font-size: large;
+  top: 20px;
+  left: 20px;
 }

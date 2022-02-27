@@ -1,5 +1,6 @@
 import * as crypo from "./src/crypo"
 import path from "path-browserify"
+import streamSaver from 'streamsaver'
 
 let fileIsHere = false
 let working = false
@@ -134,8 +135,10 @@ async function main(){
         if(divv !== null){
             divv.innerHTML = ''
         }
-        function parseFile(file: File) {
+        function parseFile(file: File, filename:string) {
             return new Promise<Uint8Array[]>((callback)=>{
+                const fileStream = streamSaver.createWriteStream(filename)
+                const writer = fileStream.getWriter()
                 if(fileIsHere === false || fileInputDom.files === null){
                     return
                 }
@@ -158,9 +161,9 @@ async function main(){
                             temp = crypo.Decrypt(new Uint8Array(fr.result), password)
                         }
                         console.log('Dumping')
-                        chunkList.push(temp)
+                        // chunkList.push(temp)
                         offset += chunk;
-                        temp = new Uint8Array()
+                        writer.write(temp)
     
                         continue_reading();   
                     } catch (error) {
@@ -182,6 +185,7 @@ async function main(){
                     try {
                         if (offset >= file.size) {
                             setprogbar(1)
+                            writer.close()
                             callback(chunkList);
                             return;
                         }
@@ -213,15 +217,15 @@ async function main(){
                 window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.')
                 continue
             }
-    
-            const datas = await parseFile(fileInputDom.files[i])
-            console.log('downloading..')
+            let fName
             if(isEncrypt){
-                downloadBlob(datas, `${fname}${extname}`)
+                fName = `${fname}${extname}`
             }
             else{
-                downloadBlob(datas, `${path.parse(fname).name}`)
+                fName = `${path.parse(fname).name}`
             }
+            const datas = await parseFile(fileInputDom.files[i], fName)
+            console.log('downloading..')
         }
         console.log('complete')
         working = false

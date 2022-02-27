@@ -33,6 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypo = __importStar(require("./src/crypo"));
 const path_browserify_1 = __importDefault(require("path-browserify"));
+const streamsaver_1 = __importDefault(require("streamsaver"));
 let fileIsHere = false;
 let working = false;
 function sleep(ms) {
@@ -163,8 +164,10 @@ function main() {
                 if (divv !== null) {
                     divv.innerHTML = '';
                 }
-                function parseFile(file) {
+                function parseFile(file, filename) {
                     return new Promise((callback) => {
+                        const fileStream = streamsaver_1.default.createWriteStream(filename);
+                        const writer = fileStream.getWriter();
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;
                         }
@@ -188,9 +191,9 @@ function main() {
                                         temp = crypo.Decrypt(new Uint8Array(fr.result), password);
                                     }
                                     console.log('Dumping');
-                                    chunkList.push(temp);
+                                    // chunkList.push(temp)
                                     offset += chunk;
-                                    temp = new Uint8Array();
+                                    writer.write(temp);
                                     continue_reading();
                                 }
                                 catch (error) {
@@ -214,6 +217,7 @@ function main() {
                                 try {
                                     if (offset >= file.size) {
                                         setprogbar(1);
+                                        writer.close();
                                         callback(chunkList);
                                         return;
                                     }
@@ -247,14 +251,15 @@ function main() {
                         window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.');
                         continue;
                     }
-                    const datas = yield parseFile(fileInputDom.files[i]);
-                    console.log('downloading..');
+                    let fName;
                     if (isEncrypt) {
-                        downloadBlob(datas, `${fname}${extname}`);
+                        fName = `${fname}${extname}`;
                     }
                     else {
-                        downloadBlob(datas, `${path_browserify_1.default.parse(fname).name}`);
+                        fName = `${path_browserify_1.default.parse(fname).name}`;
                     }
+                    const datas = yield parseFile(fileInputDom.files[i], fName);
+                    console.log('downloading..');
                 }
                 console.log('complete');
                 working = false;
