@@ -97,6 +97,7 @@ async function main(){
     if(getOS() === 'windows'){
         winLink.style.visibility = 'visible'
         winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`)
+        winLink.innerText = 'ASHS-Windows 사용하기'
     }
 
     fileInputDom.onchange = () => {
