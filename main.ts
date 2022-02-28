@@ -135,7 +135,7 @@ async function main(){
         function parseFile(file: File, filename:string) {
             return new Promise<void>(async (callback)=>{
                 let writer:WritableStreamDefaultWriter<any>|FileSystemWritableFileStream
-                if(!window.showSaveFilePicker){
+                if(!window.showSaveFilePicker && false){
                     const fileStream = streamSaver.createWriteStream(filename)
                     writer = fileStream.getWriter()
                 }
@@ -146,7 +146,7 @@ async function main(){
                             types: [{
                                 description: 'ASHS File',
                                 accept: {
-                                  'application/ashs': ['.ashs'],
+                                  'application/octet-stream': ['.ashs'],
                                 },
                             }],
                         });

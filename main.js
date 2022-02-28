@@ -160,7 +160,7 @@ function main() {
                 function parseFile(file, filename) {
                     return new Promise((callback) => __awaiter(this, void 0, void 0, function* () {
                         let writer;
-                        if (!window.showSaveFilePicker) {
+                        if (!window.showSaveFilePicker && false) {
                             const fileStream = streamsaver_1.default.createWriteStream(filename);
                             writer = fileStream.getWriter();
                         }
@@ -171,7 +171,7 @@ function main() {
                                     types: [{
                                             description: 'ASHS File',
                                             accept: {
-                                                'application/ashs': ['.ashs'],
+                                                'application/octet-stream': ['.ashs'],
                                             },
                                         }],
                                 });
