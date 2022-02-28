@@ -20,8 +20,6 @@
     "aes-js": "^3.1.2",
     "bson": "^4.6.1",
     "glob": "^7.2.0",
-    "js-crypto-aes": "^1.0.3",
-    "localforage": "^1.10.0",
     "milligram": "^1.4.1",
     "path-browserify": "^1.0.1",
     "sha3": "^2.1.4",

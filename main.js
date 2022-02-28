@@ -39,29 +39,25 @@ let working = false;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-const downloadBlob = (data, fileName, mimeType = 'application/octet-stream') => {
-    const downloadURL = (data, fileName) => {
-        var _a;
-        console.log('downloading URL');
-        const a = document.createElement('a');
-        const b = document.createElement('div');
-        b.classList.add('outer');
-        a.href = data;
-        a.download = fileName;
-        const divv = (_a = document.getElementById('cas')) !== null && _a !== void 0 ? _a : document.body;
-        divv.appendChild(b);
-        b.appendChild(a);
-        a.innerText = `${fileName}: 다운로드 되지 않으면 이 링크를 클릭하세요`;
-        a.click();
-        console.log('downloaded?');
-    };
-    const blob = new Blob(data, {
-        type: mimeType
-    });
-    const url = window.URL.createObjectURL(blob);
-    downloadURL(url, fileName);
-    setTimeout(() => window.URL.revokeObjectURL(url), 100000);
-};
+function getOS() {
+    let userAgent = window.navigator.userAgent.toLowerCase(), macosPlatforms = /(macintosh|macintel|macppc|mac68k|macos)/i, windowsPlatforms = /(win32|win64|windows|wince)/i, iosPlatforms = /(iphone|ipad|ipod)/i, os = null;
+    if (macosPlatforms.test(userAgent)) {
+        os = "macos";
+    }
+    else if (iosPlatforms.test(userAgent)) {
+        os = "ios";
+    }
+    else if (windowsPlatforms.test(userAgent)) {
+        os = "windows";
+    }
+    else if (/android/.test(userAgent)) {
+        os = "android";
+    }
+    else if (!os && /linux/.test(userAgent)) {
+        os = "linux";
+    }
+    return os;
+}
 function setprogbar(params) {
     try {
         const progbar = document.querySelector('progress');
@@ -82,9 +78,6 @@ function checkRequirementVaild() {
     }
     if (window.navigator.userAgent.toLowerCase().includes('wv')) {
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다');
-    }
-    else if (navigator.deviceMemory && (navigator.deviceMemory <= 4)) {
-        Invaild();
     }
     const root = document.querySelector(':root');
     if (root) {
@@ -127,7 +120,7 @@ function main() {
             main();
             return;
         }
-        if (window.navigator.userAgent.toLowerCase().includes('win')) {
+        if (getOS() === 'windows') {
             winLink.style.visibility = 'visible';
             winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`);
         }
@@ -159,7 +152,6 @@ function main() {
                 working = true;
                 const password = passwordDom.value;
                 let chunks = -1;
-                let chunkList = [];
                 const divv = document.getElementById('cas');
                 if (divv !== null) {
                     divv.innerHTML = '';
@@ -191,7 +183,6 @@ function main() {
                                         temp = crypo.Decrypt(new Uint8Array(fr.result), password);
                                     }
                                     console.log('Dumping');
-                                    // chunkList.push(temp)
                                     offset += chunk;
                                     writer.write(temp);
                                     continue_reading();
@@ -204,7 +195,7 @@ function main() {
                             });
                         };
                         fr.onerror = function () {
-                            callback([]);
+                            callback();
                         };
                         function startReading() {
                             return __awaiter(this, void 0, void 0, function* () {
@@ -218,7 +209,7 @@ function main() {
                                     if (offset >= file.size) {
                                         setprogbar(1);
                                         writer.close();
-                                        callback(chunkList);
+                                        callback();
                                         return;
                                     }
                                     let slice = file.slice(offset, offset + chunk);

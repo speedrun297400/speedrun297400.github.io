@@ -9,27 +9,26 @@ function sleep(ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const downloadBlob = (data:Uint8Array[] ,fileName:string, mimeType:string='application/octet-stream') => {
-    const downloadURL = (data:string, fileName:string) => {
-        console.log('downloading URL')
-        const a = document.createElement('a')
-        const b = document.createElement('div')
-        b.classList.add('outer')
-        a.href = data
-        a.download = fileName
-        const divv = document.getElementById('cas') ?? document.body
-        divv.appendChild(b)
-        b.appendChild(a)
-        a.innerText = `${fileName}: 다운로드 되지 않으면 이 링크를 클릭하세요`
-        a.click()
-        console.log('downloaded?')
+function getOS() {
+    let userAgent = window.navigator.userAgent.toLowerCase(),
+        macosPlatforms = /(macintosh|macintel|macppc|mac68k|macos)/i,
+        windowsPlatforms = /(win32|win64|windows|wince)/i,
+        iosPlatforms = /(iphone|ipad|ipod)/i,
+        os = null;
+
+    if (macosPlatforms.test(userAgent)) {
+        os = "macos";
+    } else if (iosPlatforms.test(userAgent)) {
+        os = "ios";
+    } else if (windowsPlatforms.test(userAgent)) {
+        os = "windows";
+    } else if (/android/.test(userAgent)) {
+        os = "android";
+    } else if (!os && /linux/.test(userAgent)) {
+        os = "linux";
     }
-    const blob = new Blob(data, {
-        type: mimeType
-    })
-    const url = window.URL.createObjectURL(blob)
-    downloadURL(url, fileName)
-    setTimeout(() => window.URL.revokeObjectURL(url), 100000)
+
+    return os;
 }
 
 function setprogbar(params:number) {
@@ -52,9 +51,6 @@ function checkRequirementVaild() {
     }
     if(window.navigator.userAgent.toLowerCase().includes('wv')){
         Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다')
-    }
-    else if(navigator.deviceMemory && (navigator.deviceMemory <= 4)){
-        Invaild()
     }
     const root = document.querySelector<HTMLElement>(':root')
     if(root){
@@ -98,7 +94,7 @@ async function main(){
         main()
         return
     }
-    if(window.navigator.userAgent.toLowerCase().includes('win')){
+    if(getOS() === 'windows'){
         winLink.style.visibility = 'visible'
         winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`)
     }
@@ -130,13 +126,12 @@ async function main(){
         working = true
         const password = passwordDom.value
         let chunks = -1
-        let chunkList:Uint8Array[] = []
         const divv = document.getElementById('cas')
         if(divv !== null){
             divv.innerHTML = ''
         }
         function parseFile(file: File, filename:string) {
-            return new Promise<Uint8Array[]>((callback)=>{
+            return new Promise<void>((callback)=>{
                 const fileStream = streamSaver.createWriteStream(filename)
                 const writer = fileStream.getWriter()
                 if(fileIsHere === false || fileInputDom.files === null){
@@ -161,7 +156,6 @@ async function main(){
                             temp = crypo.Decrypt(new Uint8Array(fr.result), password)
                         }
                         console.log('Dumping')
-                        // chunkList.push(temp)
                         offset += chunk;
                         writer.write(temp)
     
@@ -173,7 +167,7 @@ async function main(){
                     }
                 };
                 fr.onerror = function() {
-                    callback([]);
+                    callback();
                 };
 
                 async function startReading() {
@@ -186,7 +180,7 @@ async function main(){
                         if (offset >= file.size) {
                             setprogbar(1)
                             writer.close()
-                            callback(chunkList);
+                            callback();
                             return;
                         }
                         let slice = file.slice(offset, offset + chunk);
