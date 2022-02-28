@@ -79,22 +79,6 @@ function checkRequirementVaild() {
     }
 }
 checkRequirementVaild()
-function getNewSize(originalSize:number,isEncrypt:boolean){
-    let chunk = 10240000;
-    let convertedChunk = 43
-    if(!isEncrypt){
-        chunk = 10240043;
-        convertedChunk = -43
-    }
-    let size = 0
-    while(originalSize < chunk){
-        size += (chunk + convertedChunk)
-        originalSize -= (chunk + convertedChunk)
-    }
-    size += originalSize + convertedChunk
-    return size;
-}
-
 
 async function main(){
     const fileInputDom = <HTMLInputElement>document.getElementById('file')
@@ -149,9 +133,32 @@ async function main(){
             divv.innerHTML = ''
         }
         function parseFile(file: File, filename:string) {
-            return new Promise<void>((callback)=>{
-                const fileStream = streamSaver.createWriteStream(filename)
-                const writer = fileStream.getWriter()
+            return new Promise<void>(async (callback)=>{
+                let writer:WritableStreamDefaultWriter<any>|FileSystemWritableFileStream
+                if(!window.showSaveFilePicker){
+                    const fileStream = streamSaver.createWriteStream(filename)
+                    writer = fileStream.getWriter()
+                }
+                else{
+                    if(isEncrypt){
+                        const fs = await window.showSaveFilePicker({
+                            suggestedName: filename,
+                            types: [{
+                                description: 'ASHS File',
+                                accept: {
+                                  'application/ashs': ['.ashs'],
+                                },
+                            }],
+                        });
+                        writer = await fs.createWritable();
+                    }
+                    else{
+                        const fs = await window.showSaveFilePicker({
+                            suggestedName: filename,
+                        });
+                        writer = await fs.createWritable();
+                    }
+                }
                 if(fileIsHere === false || fileInputDom.files === null){
                     return
                 }
@@ -199,6 +206,9 @@ async function main(){
                             setprogbar(1)
                             writer.close()
                             callback();
+                            if(divv !== null){
+                                divv.innerHTML =`${filename} 파일이 저장되었습니다`;
+                            }
                             return;
                         }
                         let slice = file.slice(offset, offset + chunk);

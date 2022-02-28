@@ -105,21 +105,6 @@ function checkRequirementVaild() {
     }
 }
 checkRequirementVaild();
-function getNewSize(originalSize, isEncrypt) {
-    let chunk = 10240000;
-    let convertedChunk = 43;
-    if (!isEncrypt) {
-        chunk = 10240043;
-        convertedChunk = -43;
-    }
-    let size = 0;
-    while (originalSize < chunk) {
-        size += (chunk + convertedChunk);
-        originalSize -= (chunk + convertedChunk);
-    }
-    size += originalSize + convertedChunk;
-    return size;
-}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const fileInputDom = document.getElementById('file');
@@ -173,9 +158,32 @@ function main() {
                     divv.innerHTML = '';
                 }
                 function parseFile(file, filename) {
-                    return new Promise((callback) => {
-                        const fileStream = streamsaver_1.default.createWriteStream(filename);
-                        const writer = fileStream.getWriter();
+                    return new Promise((callback) => __awaiter(this, void 0, void 0, function* () {
+                        let writer;
+                        if (!window.showSaveFilePicker) {
+                            const fileStream = streamsaver_1.default.createWriteStream(filename);
+                            writer = fileStream.getWriter();
+                        }
+                        else {
+                            if (isEncrypt) {
+                                const fs = yield window.showSaveFilePicker({
+                                    suggestedName: filename,
+                                    types: [{
+                                            description: 'ASHS File',
+                                            accept: {
+                                                'application/ashs': ['.ashs'],
+                                            },
+                                        }],
+                                });
+                                writer = yield fs.createWritable();
+                            }
+                            else {
+                                const fs = yield window.showSaveFilePicker({
+                                    suggestedName: filename,
+                                });
+                                writer = yield fs.createWritable();
+                            }
+                        }
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;
                         }
@@ -226,6 +234,9 @@ function main() {
                                         setprogbar(1);
                                         writer.close();
                                         callback();
+                                        if (divv !== null) {
+                                            divv.innerHTML = `${filename} 파일이 저장되었습니다`;
+                                        }
                                         return;
                                     }
                                     let slice = file.slice(offset, offset + chunk);
@@ -241,7 +252,7 @@ function main() {
                                 }
                             });
                         }
-                    });
+                    }));
                 }
                 for (let i = 0; i < fileInputDom.files.length; i++) {
                     const fname = fileInputDom.files[i].name;
