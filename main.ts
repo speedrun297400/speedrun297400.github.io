@@ -150,12 +150,7 @@ async function main(){
         }
         function parseFile(file: File, filename:string) {
             return new Promise<void>((callback)=>{
-                const fileStream = streamSaver.createWriteStream(
-                    filename,
-                    {
-                        size: getNewSize(file.size, isEncrypt)
-                    }
-                )
+                const fileStream = streamSaver.createWriteStream(filename)
                 const writer = fileStream.getWriter()
                 if(fileIsHere === false || fileInputDom.files === null){
                     return

@@ -174,9 +174,7 @@ function main() {
                 }
                 function parseFile(file, filename) {
                     return new Promise((callback) => {
-                        const fileStream = streamsaver_1.default.createWriteStream(filename, {
-                            size: getNewSize(file.size, isEncrypt)
-                        });
+                        const fileStream = streamsaver_1.default.createWriteStream(filename);
                         const writer = fileStream.getWriter();
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;
