@@ -161,7 +161,7 @@ function main() {
                 function parseFile(file, filename) {
                     return new Promise((callback) => __awaiter(this, void 0, void 0, function* () {
                         let writer;
-                        if (!window.showSaveFilePicker && false) {
+                        if (!window.showSaveFilePicker) {
                             const fileStream = streamsaver_1.default.createWriteStream(filename);
                             writer = fileStream.getWriter();
                         }
