@@ -1,5 +1,5 @@
 git add .
-git commit -m "removed requirements"
+git commit -m "changed readme"
 git push -u origin main
 
 
