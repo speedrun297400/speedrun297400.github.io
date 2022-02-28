@@ -1,5 +1,5 @@
 git add .
-git commit -m "changed autocomplete"
+git commit -m "added file size to download"
 git push -u origin main
 
 

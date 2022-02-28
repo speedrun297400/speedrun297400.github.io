@@ -106,6 +106,21 @@ function checkRequirementVaild() {
     }
 }
 checkRequirementVaild();
+function getNewSize(originalSize, isEncrypt) {
+    let chunk = 10240000;
+    let convertedChunk = 43;
+    if (!isEncrypt) {
+        chunk = 10240043;
+        convertedChunk = -43;
+    }
+    let size = 0;
+    while (originalSize < chunk) {
+        size += (chunk + convertedChunk);
+        originalSize -= (chunk + convertedChunk);
+    }
+    size += originalSize + convertedChunk;
+    return size;
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const fileInputDom = document.getElementById('file');
@@ -160,7 +175,9 @@ function main() {
                 }
                 function parseFile(file, filename) {
                     return new Promise((callback) => {
-                        const fileStream = streamsaver_1.default.createWriteStream(filename);
+                        const fileStream = streamsaver_1.default.createWriteStream(filename, {
+                            size: getNewSize(file.size, isEncrypt)
+                        });
                         const writer = fileStream.getWriter();
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;

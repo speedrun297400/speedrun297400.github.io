@@ -79,6 +79,23 @@ function checkRequirementVaild() {
     }
 }
 checkRequirementVaild()
+function getNewSize(originalSize:number,isEncrypt:boolean){
+    let chunk = 10240000;
+    let convertedChunk = 43
+    if(!isEncrypt){
+        chunk = 10240043;
+        convertedChunk = -43
+    }
+    let size = 0
+    while(originalSize < chunk){
+        size += (chunk + convertedChunk)
+        originalSize -= (chunk + convertedChunk)
+    }
+    size += originalSize + convertedChunk
+    return size;
+}
+
+
 async function main(){
     const fileInputDom = <HTMLInputElement>document.getElementById('file')
     const passwordDom = <HTMLInputElement>document.getElementById('password')
@@ -133,7 +150,12 @@ async function main(){
         }
         function parseFile(file: File, filename:string) {
             return new Promise<void>((callback)=>{
-                const fileStream = streamSaver.createWriteStream(filename)
+                const fileStream = streamSaver.createWriteStream(
+                    filename,
+                    {
+                        size: getNewSize(file.size, isEncrypt)
+                    }
+                )
                 const writer = fileStream.getWriter()
                 if(fileIsHere === false || fileInputDom.files === null){
                     return
