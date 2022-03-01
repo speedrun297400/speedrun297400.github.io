@@ -135,7 +135,7 @@ async function main(){
         function parseFile(file: File, filename:string) {
             return new Promise<void>(async (callback)=>{
                 let writer:WritableStreamDefaultWriter<any>|FileSystemWritableFileStream
-                if(!window.showSaveFilePicker || true){
+                if(!window.showSaveFilePicker){
                     const fileStream = streamSaver.createWriteStream(filename)
                     writer = fileStream.getWriter()
                 }
