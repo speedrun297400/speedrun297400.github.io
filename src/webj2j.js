@@ -12,7 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< HEAD
 exports.decrypt = exports.createIVWithPassword = void 0;
+=======
+exports.decrypt = void 0;
+>>>>>>> c78fdda5881cfc8d428ada60880662f60a8179a8
 const streamsaver_1 = __importDefault(require("streamsaver"));
 const J2J_VALUE = 10240000;
 const J2J_FOOTER_SIZE = 32;
@@ -71,10 +75,17 @@ function createIVWithPassword(password2) {
     }
     return iv;
 }
+<<<<<<< HEAD
 exports.createIVWithPassword = createIVWithPassword;
 function decrypt(file, password, outputName) {
     return __awaiter(this, void 0, void 0, function* () {
         let filesize = file.size;
+=======
+function decrypt(file, password, outputName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let filesize = file.size;
+        let filename = file.name;
+>>>>>>> c78fdda5881cfc8d428ada60880662f60a8179a8
         let footer = yield file.slice(filesize - J2J_FOOTER_SIZE).arrayBuffer();
         let footer_info = parseFooter(footer);
         if (!footer_info) {
@@ -90,6 +101,10 @@ function decrypt(file, password, outputName) {
         else {
             iv = createIVWithPassword(password);
         }
+<<<<<<< HEAD
+=======
+        console.log(iv);
+>>>>>>> c78fdda5881cfc8d428ada60880662f60a8179a8
         let stream = streamsaver_1.default.createWriteStream(outputName, {
             size: filesize - J2J_FOOTER_SIZE
         });
