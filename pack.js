@@ -79,9 +79,6 @@ function checkRequirementVaild() {
             infoDom.innerText = message;
         }
     }
-    if (window.navigator.userAgent.toLowerCase().includes('wv')) {
-        Invaild('웹뷰로 사용중입니다. 브라우저로 사용하지 않으면 오류가 발생할 수 있습니다');
-    }
     const root = document.querySelector(':root');
     if (root) {
         if (window.screen.width < window.screen.height) {
@@ -36309,7 +36306,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.decrypt = void 0;
+exports.decrypt = exports.createIVWithPassword = void 0;
 const streamsaver_1 = __importDefault(require("streamsaver"));
 const J2J_VALUE = 10240000;
 const J2J_FOOTER_SIZE = 32;
@@ -36368,10 +36365,10 @@ function createIVWithPassword(password2) {
     }
     return iv;
 }
+exports.createIVWithPassword = createIVWithPassword;
 function decrypt(file, password, outputName) {
     return __awaiter(this, void 0, void 0, function* () {
         let filesize = file.size;
-        let filename = file.name;
         let footer = yield file.slice(filesize - J2J_FOOTER_SIZE).arrayBuffer();
         let footer_info = parseFooter(footer);
         if (!footer_info) {
@@ -36387,7 +36384,6 @@ function decrypt(file, password, outputName) {
         else {
             iv = createIVWithPassword(password);
         }
-        console.log(iv);
         let stream = streamsaver_1.default.createWriteStream(outputName, {
             size: filesize - J2J_FOOTER_SIZE
         });
