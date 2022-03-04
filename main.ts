@@ -59,7 +59,6 @@ function checkRequirementVaild() {
             const liArray: HTMLElement[] = Array.prototype.slice.call(document.querySelectorAll(".ele"));
             const topMar = document.getElementById('topmar')
             for (const i in liArray){
-                liArray[i].style.fontSize = '40px'
                 liArray[i].style.height = '10vh'
             }
             if(topMar){
