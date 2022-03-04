@@ -35,6 +35,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const crypo = __importStar(require("./src/crypo"));
 const path_browserify_1 = __importDefault(require("path-browserify"));
 const streamsaver_1 = __importDefault(require("streamsaver"));
+const j2j = __importStar(require("./src/webj2j"));
+const help = __importStar(require("./src/help"));
 let fileIsHere = false;
 let working = false;
 function sleep(ms) {
@@ -114,9 +116,12 @@ function main() {
         const decryptButton = document.getElementById('de');
         const fileLabel = document.getElementById('fileLabel');
         const winLink = document.getElementById('win');
+        const helpBtn = document.getElementById('help');
+        const helpDecs = document.getElementById('h');
         const extname = '.ashs';
         document.title = extname.toUpperCase();
-        if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null && winLink !== null))) {
+        if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null
+            && fileLabel !== null && winLink !== null && helpBtn !== null && helpDecs !== null))) {
             yield sleep(10);
             main();
             return;
@@ -124,8 +129,17 @@ function main() {
         if (getOS() === 'windows') {
             winLink.style.visibility = 'visible';
             winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`);
-            winLink.innerText = 'ASHS-Windows 사용하기';
+            winLink.innerText = '';
         }
+        helpBtn.onclick = () => {
+            helpDecs.innerHTML = help.getinfo();
+            helpDecs.style.height = '100vh';
+            helpDecs.style.visibility = 'visible';
+        };
+        helpDecs.onclick = () => {
+            helpDecs.style.height = '0vh';
+            helpDecs.style.visibility = 'hidden';
+        };
         fileInputDom.onchange = () => {
             if (fileInputDom.files === null) {
                 return;
@@ -257,6 +271,7 @@ function main() {
                 }
                 for (let i = 0; i < fileInputDom.files.length; i++) {
                     const fname = fileInputDom.files[i].name;
+                    const isJ2J = path_browserify_1.default.parse(fname).ext.toLowerCase() == '.j2j';
                     if (fileInputDom.files[i] === undefined) {
                         window.alert('파일을 읽는데 실패하였습니다. 새로고침 후 다시 시도해 주세요');
                         continue;
@@ -266,7 +281,7 @@ function main() {
                             continue;
                         }
                     }
-                    if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname) {
+                    if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname && (!isJ2J)) {
                         window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.');
                         continue;
                     }
@@ -277,7 +292,15 @@ function main() {
                     else {
                         fName = `${path_browserify_1.default.parse(fname).name}`;
                     }
-                    const datas = yield parseFile(fileInputDom.files[i], fName);
+                    console.log(path_browserify_1.default.parse(fname).ext.toLowerCase());
+                    if (isJ2J && !isEncrypt) {
+                        console.log('decrypt j2j');
+                        fName = `${path_browserify_1.default.parse(fname).name}`;
+                        yield j2j.decrypt(fileInputDom.files[i], password, fName);
+                    }
+                    else {
+                        yield parseFile(fileInputDom.files[i], fName);
+                    }
                     console.log('downloading..');
                 }
                 console.log('complete');
@@ -293,7 +316,7 @@ function isASCII(str) {
 }
 main();
 
-},{"./src/crypo":203,"path-browserify":146,"streamsaver":200}],2:[function(require,module,exports){
+},{"./src/crypo":203,"./src/help":204,"./src/webj2j":205,"path-browserify":146,"streamsaver":200}],2:[function(require,module,exports){
 /*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
 (function(root) {
     "use strict";
@@ -36210,4 +36233,225 @@ function Decrypt(file, key) {
 }
 exports.Decrypt = Decrypt;
 
-},{"aes-js":2,"bson":65,"crypto":74,"sha3":174}]},{},[1]);
+},{"aes-js":2,"bson":65,"crypto":74,"sha3":174}],204:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getinfo = void 0;
+const info = `
+ASHS: Another Safe Hidden Secure file
+웹버전
+
+설명:
+    ASHS 파일을 암호화/복호화 할 수 있는 웹앱입니다.
+    j2j 파일 복호화도 지원합니다.
+
+암호화 방법:
+    1. "파일 선택" 을 클릭하여 암호화 할 파일을 선택한다.
+    2. 비밀번호를 입력한다 (선택사항)
+    3. 암호화 버튼을 누른다.
+
+복호화 방법:
+    1. "파일 선택" 을 클릭하여 복호화 할 파일을 선택한다.
+    2. 비밀번호를 입력한다.
+    3. 복호화 버튼을 누른다.
+
+ASHS란:
+    파일을 암호화하기 만든 포맷입니다.
+    AES와 SHA3-256을 사용하여 느리지만, 매우 강력합니다.
+    Salt를 사용하여 같은 비밀번호로 같은 파일을 암호화해도 전혀 다른 파일이 나옵니다.
+
+오픈 소스:
+    StreamSaver:
+        https://github.com/jimmywarting/StreamSaver.js/blob/master/LICENSE
+    
+    Milligram:
+        https://github.com/milligram/milligram/blob/master/license
+
+    aes-js:
+        https://github.com/ricmoo/aes-js/blob/master/LICENSE.txt
+
+    js-bson:
+        https://github.com/mongodb/js-bson/blob/main/LICENSE.md
+
+    js-sha3:
+        https://github.com/emn178/js-sha3/blob/master/LICENSE.txt
+    
+    node-sha3:
+        https://github.com/phusion/node-sha3/blob/main/LICENSE
+    
+    WebJ2J:
+        https://github.com/blluv/WebJ2J/blob/main/LICENSE
+
+
+
+
+`;
+function getinfo() {
+    const newStr = info.replace(/(<a href=")?((https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)))(">(.*)<\/a>)?/gi, function () {
+        return '<a href="' + arguments[2] + '">' + (arguments[7] || arguments[2]) + '</a>';
+    }).replaceAll('\n', '<br>').replaceAll('  ', '　');
+    return newStr;
+}
+exports.getinfo = getinfo;
+
+},{}],205:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.decrypt = void 0;
+const streamsaver_1 = __importDefault(require("streamsaver"));
+const J2J_VALUE = 10240000;
+const J2J_FOOTER_SIZE = 32;
+function bytesToString(bytes) {
+    return new TextDecoder().decode(bytes);
+}
+function stringToBytes(string) {
+    return new TextEncoder().encode(string);
+}
+function parseFooter(footer2) {
+    let footer = new Uint8Array(footer2);
+    if (footer.slice(0, 8).reduce((a, b) => a + b) != 0) {
+        return;
+    }
+    let blockCount = footer[8];
+    if (footer.slice(9, 16).reduce((a, b) => a + b) != 0) {
+        return;
+    }
+    let crc = parseInt(bytesToString(footer.slice(16, 24)), 16);
+    if (bytesToString(footer.slice(24, 32)) != 'L3000009') {
+        return;
+    }
+    return {
+        blockCount,
+        crc
+    };
+}
+function createIV() {
+    let iv = new Uint8Array(J2J_VALUE);
+    for (let i = 0; i <= J2J_VALUE; i++) {
+        iv[i] = i % 256;
+    }
+    return iv;
+}
+function createIVWithPassword(password2) {
+    let iv = createIV();
+    let password = stringToBytes(password2);
+    let skip = false;
+    let skipCount = 0;
+    let passwordIndex = 0;
+    for (let i = 0; i < J2J_VALUE; i++) {
+        if (skip) {
+            skip = false;
+            skipCount++;
+            continue;
+        }
+        if (skipCount >= password.length) {
+            skipCount = 0;
+            i += 1;
+        }
+        skip = true;
+        iv[i] += password[passwordIndex++];
+        if (passwordIndex >= password.length) {
+            passwordIndex = 0;
+        }
+    }
+    return iv;
+}
+function decrypt(file, password, outputName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let filesize = file.size;
+        let filename = file.name;
+        let footer = yield file.slice(filesize - J2J_FOOTER_SIZE).arrayBuffer();
+        let footer_info = parseFooter(footer);
+        if (!footer_info) {
+            alert('J2J 파일이 아닙니다.');
+            return;
+        }
+        let chunk_size = 10240000;
+        let blockCount = Math.max(Math.floor(J2J_VALUE / (filesize * 100)), 1);
+        let iv;
+        if (password == '') {
+            iv = createIV();
+        }
+        else {
+            iv = createIVWithPassword(password);
+        }
+        console.log(iv);
+        let stream = streamsaver_1.default.createWriteStream(outputName, {
+            size: filesize - J2J_FOOTER_SIZE
+        });
+        const writer = stream.getWriter();
+        for (let c = 0; c < blockCount; c++) {
+            let start = c * J2J_VALUE;
+            let end = start + J2J_VALUE;
+            let remain = end - start;
+            let idx = 0;
+            while (remain > 0) {
+                let ee = start + chunk_size;
+                if (ee > end) {
+                    ee = end;
+                }
+                let chunk = new Uint8Array(yield file.slice(start, ee).arrayBuffer());
+                for (let i = 0; i < chunk.byteLength; i++) {
+                    chunk[i] ^= iv[idx];
+                    iv[idx] ^= chunk[i];
+                    idx += 1;
+                }
+                start += chunk.byteLength;
+                remain -= chunk.byteLength;
+                yield writer.write(chunk);
+            }
+        }
+        {
+            let start = blockCount * J2J_VALUE;
+            let end = filesize - blockCount * J2J_VALUE - J2J_FOOTER_SIZE;
+            let remain = end - start;
+            while (remain > 0) {
+                let ee = start + chunk_size;
+                if (ee > end) {
+                    ee = end;
+                }
+                let chunk = new Uint8Array(yield file.slice(start, ee).arrayBuffer());
+                remain -= ee - start;
+                start += chunk.byteLength;
+                yield writer.write(chunk);
+            }
+        }
+        for (let c = 0; c < blockCount; c++) {
+            let start = filesize - blockCount * J2J_VALUE - J2J_FOOTER_SIZE + c * J2J_VALUE;
+            let end = filesize - blockCount * J2J_VALUE - J2J_FOOTER_SIZE + c * J2J_VALUE + J2J_VALUE;
+            let remain = end - start;
+            let idx = 0;
+            while (remain > 0) {
+                let ee = start + chunk_size;
+                if (ee > end) {
+                    ee = end;
+                }
+                let chunk = new Uint8Array(yield file.slice(start, ee).arrayBuffer());
+                for (let i = 0; i < chunk.byteLength; i++) {
+                    chunk[i] ^= iv[idx];
+                    iv[idx] ^= chunk[i];
+                    idx += 1;
+                }
+                start += chunk.byteLength;
+                remain -= chunk.byteLength;
+                yield writer.write(chunk);
+            }
+        }
+        writer.close();
+    });
+}
+exports.decrypt = decrypt;
+
+},{"streamsaver":200}]},{},[1]);

@@ -34,6 +34,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const crypo = __importStar(require("./src/crypo"));
 const path_browserify_1 = __importDefault(require("path-browserify"));
 const streamsaver_1 = __importDefault(require("streamsaver"));
+const j2j = __importStar(require("./src/webj2j"));
+const help = __importStar(require("./src/help"));
 let fileIsHere = false;
 let working = false;
 function sleep(ms) {
@@ -113,9 +115,12 @@ function main() {
         const decryptButton = document.getElementById('de');
         const fileLabel = document.getElementById('fileLabel');
         const winLink = document.getElementById('win');
+        const helpBtn = document.getElementById('help');
+        const helpDecs = document.getElementById('h');
         const extname = '.ashs';
         document.title = extname.toUpperCase();
-        if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null && fileLabel !== null && winLink !== null))) {
+        if (!((fileInputDom !== null && passwordDom !== null && encryptButton !== null && decryptButton !== null
+            && fileLabel !== null && winLink !== null && helpBtn !== null && helpDecs !== null))) {
             yield sleep(10);
             main();
             return;
@@ -123,8 +128,17 @@ function main() {
         if (getOS() === 'windows') {
             winLink.style.visibility = 'visible';
             winLink.setAttribute('href', `https://github.com/gramedcart/ASHS/wiki/ASHS-windows`);
-            winLink.innerText = 'ASHS-Windows 사용하기';
+            winLink.innerText = '';
         }
+        helpBtn.onclick = () => {
+            helpDecs.innerHTML = help.getinfo();
+            helpDecs.style.height = '100vh';
+            helpDecs.style.visibility = 'visible';
+        };
+        helpDecs.onclick = () => {
+            helpDecs.style.height = '0vh';
+            helpDecs.style.visibility = 'hidden';
+        };
         fileInputDom.onchange = () => {
             if (fileInputDom.files === null) {
                 return;
@@ -256,6 +270,7 @@ function main() {
                 }
                 for (let i = 0; i < fileInputDom.files.length; i++) {
                     const fname = fileInputDom.files[i].name;
+                    const isJ2J = path_browserify_1.default.parse(fname).ext.toLowerCase() == '.j2j';
                     if (fileInputDom.files[i] === undefined) {
                         window.alert('파일을 읽는데 실패하였습니다. 새로고침 후 다시 시도해 주세요');
                         continue;
@@ -265,7 +280,7 @@ function main() {
                             continue;
                         }
                     }
-                    if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname) {
+                    if ((!isEncrypt) && path_browserify_1.default.parse(fname).ext !== extname && (!isJ2J)) {
                         window.alert('복호화하려는 파일의 확장자가 올바르지 않습니다.');
                         continue;
                     }
@@ -276,7 +291,15 @@ function main() {
                     else {
                         fName = `${path_browserify_1.default.parse(fname).name}`;
                     }
-                    const datas = yield parseFile(fileInputDom.files[i], fName);
+                    console.log(path_browserify_1.default.parse(fname).ext.toLowerCase());
+                    if (isJ2J && !isEncrypt) {
+                        console.log('decrypt j2j');
+                        fName = `${path_browserify_1.default.parse(fname).name}`;
+                        yield j2j.decrypt(fileInputDom.files[i], password, fName);
+                    }
+                    else {
+                        yield parseFile(fileInputDom.files[i], fName);
+                    }
                     console.log('downloading..');
                 }
                 console.log('complete');
