@@ -38,6 +38,7 @@ const j2j = __importStar(require("./src/webj2j"));
 const help = __importStar(require("./src/help"));
 let fileIsHere = false;
 let working = false;
+const useStreamSaver = true;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -169,31 +170,9 @@ function main() {
                 }
                 function parseFile(file, filename) {
                     return new Promise((callback) => __awaiter(this, void 0, void 0, function* () {
-                        let writer;
-                        if (!window.showSaveFilePicker) {
-                            const fileStream = streamsaver_1.default.createWriteStream(filename);
-                            writer = fileStream.getWriter();
-                        }
-                        else {
-                            if (isEncrypt) {
-                                const fs = yield window.showSaveFilePicker({
-                                    suggestedName: filename,
-                                    types: [{
-                                            description: 'ASHS File',
-                                            accept: {
-                                                'application/octet-stream': ['.ashs'],
-                                            },
-                                        }],
-                                });
-                                writer = yield fs.createWritable();
-                            }
-                            else {
-                                const fs = yield window.showSaveFilePicker({
-                                    suggestedName: filename,
-                                });
-                                writer = yield fs.createWritable();
-                            }
-                        }
+                        const fileStream = streamsaver_1.default.createWriteStream(filename);
+                        let writer = fileStream.getWriter();
+                        console.log("opened Stream");
                         if (fileIsHere === false || fileInputDom.files === null) {
                             return;
                         }
@@ -211,14 +190,14 @@ function main() {
                                     }
                                     let temp;
                                     if (isEncrypt) {
-                                        temp = crypo.Encrypt(new Uint8Array(fr.result), password);
+                                        temp = yield crypo.Encrypt(new Uint8Array(fr.result), password);
                                     }
                                     else {
-                                        temp = crypo.Decrypt(new Uint8Array(fr.result), password);
+                                        temp = yield crypo.Decrypt(new Uint8Array(fr.result), password);
                                     }
-                                    console.log('Dumping');
                                     offset += chunk;
                                     writer.write(temp);
+                                    console.log('Dumping');
                                     continue_reading();
                                 }
                                 catch (error) {

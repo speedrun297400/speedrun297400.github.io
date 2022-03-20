@@ -6,6 +6,7 @@ import * as help from './src/help'
 
 let fileIsHere = false
 let working = false
+const useStreamSaver = true
 
 function sleep(ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -145,31 +146,9 @@ async function main(){
         }
         function parseFile(file: File, filename:string) {
             return new Promise<void>(async (callback)=>{
-                let writer:WritableStreamDefaultWriter<any>|FileSystemWritableFileStream
-                if(!window.showSaveFilePicker){
-                    const fileStream = streamSaver.createWriteStream(filename)
-                    writer = fileStream.getWriter()
-                }
-                else{
-                    if(isEncrypt){
-                        const fs = await window.showSaveFilePicker({
-                            suggestedName: filename,
-                            types: [{
-                                description: 'ASHS File',
-                                accept: {
-                                  'application/octet-stream': ['.ashs'],
-                                },
-                            }],
-                        });
-                        writer = await fs.createWritable();
-                    }
-                    else{
-                        const fs = await window.showSaveFilePicker({
-                            suggestedName: filename,
-                        });
-                        writer = await fs.createWritable();
-                    }
-                }
+                const fileStream = streamSaver.createWriteStream(filename,)
+                let writer = fileStream.getWriter()
+                console.log("opened Stream")
                 if(fileIsHere === false || fileInputDom.files === null){
                     return
                 }
@@ -186,15 +165,14 @@ async function main(){
                         }
                         let temp:Uint8Array
                         if(isEncrypt){
-                            temp = crypo.Encrypt(new Uint8Array(fr.result), password)
+                            temp = await crypo.Encrypt(new Uint8Array(fr.result), password)
                         }
                         else{
-                            temp = crypo.Decrypt(new Uint8Array(fr.result), password)
+                            temp = await crypo.Decrypt(new Uint8Array(fr.result), password)
                         }
-                        console.log('Dumping')
                         offset += chunk;
                         writer.write(temp)
-    
+                        console.log('Dumping')    
                         continue_reading();   
                     } catch (error) {
                         console.log(error)
