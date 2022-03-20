@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Decrypt = exports.Encrypt = void 0;
 const sha3_1 = __importDefault(require("sha3"));
-const aes_js_1 = require("aes-js");
 const bson_1 = require("bson");
 const crypto_1 = require("crypto");
 function hashKey(params) {
@@ -30,20 +29,8 @@ function CreateKey(key, salt) {
     });
 }
 const ctr = new Uint8Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5]);
-function EncryptOld(file, key) {
-    const salt = (0, crypto_1.randomBytes)(16);
-    const keys = hashKey(key + salt.toString('base64'));
-    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(ctr));
-    const returnFile = aesCtr.encrypt(file);
-    const d = (0, bson_1.serialize)({ data: returnFile, salt: salt });
-    console.log(d.length);
-    return d;
-}
 function Encrypt(file, key) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!window.crypto || !window.crypto.subtle) {
-            return EncryptOld(file, key);
-        }
         const salt = (0, crypto_1.randomBytes)(16);
         const keycrypto = yield CreateKey(key, salt);
         const returnFilex = yield window.crypto.subtle.encrypt({
@@ -60,9 +47,6 @@ function Encrypt(file, key) {
 exports.Encrypt = Encrypt;
 function Decrypt(file, key) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!window.crypto || !window.crypto.subtle) {
-            return DecryptOld(file, key);
-        }
         const f = (0, bson_1.deserialize)(file);
         if (f.data === null || f.salt === null) {
             throw 'data is null';
@@ -77,15 +61,3 @@ function Decrypt(file, key) {
     });
 }
 exports.Decrypt = Decrypt;
-function DecryptOld(file, key) {
-    const f = (0, bson_1.deserialize)(file);
-    if (f.data === null || f.salt === null) {
-        throw 'data is null';
-    }
-    const MainFile = f.data.buffer;
-    const salt = f.salt.buffer;
-    const keys = hashKey(key + salt.toString('base64'));
-    const aesCtr = new aes_js_1.ModeOfOperation.ctr(keys, new aes_js_1.Counter(ctr));
-    const returnFile = aesCtr.decrypt(MainFile);
-    return returnFile;
-}

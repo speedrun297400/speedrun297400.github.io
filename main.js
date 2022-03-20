@@ -79,6 +79,9 @@ function checkRequirementVaild() {
             infoDom.innerText = message;
         }
     }
+    if (!window.crypto || !window.crypto.subtle) {
+        Invaild();
+    }
     const root = document.querySelector(':root');
     if (root) {
         if (window.screen.width < window.screen.height) {

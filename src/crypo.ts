@@ -1,5 +1,4 @@
 import SHA3 from "sha3";
-import { ModeOfOperation, Counter } from "aes-js";
 import {serialize, deserialize} from "bson";
 import {randomBytes} from "crypto"
 
@@ -17,20 +16,7 @@ async function CreateKey(key:string, salt:Buffer): Promise<CryptoKey>{
 
 const ctr = new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5])
 
-function EncryptOld(file:Uint8Array, key:string){
-    const salt = randomBytes(16)
-    const keys = hashKey(key + salt.toString('base64'))
-    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(ctr));
-    const returnFile = aesCtr.encrypt(file)
-    const d = serialize({data: returnFile, salt:salt})
-    console.log(d.length)
-    return d
-}
-
 export async function Encrypt(file:Uint8Array, key:string) {
-    if(!window.crypto || !window.crypto.subtle){
-        return EncryptOld(file, key)
-    }
     const salt = randomBytes(16)
     const keycrypto = await CreateKey(key, salt)
     const returnFilex = await window.crypto.subtle.encrypt(
@@ -50,9 +36,6 @@ export async function Encrypt(file:Uint8Array, key:string) {
 
 
 export async function Decrypt(file:Uint8Array, key:string){
-    if(!window.crypto || !window.crypto.subtle){
-        return DecryptOld(file, key)
-    }
     const f = deserialize(file)
     if(f.data === null || f.salt === null){
         throw 'data is null'
@@ -67,17 +50,4 @@ export async function Decrypt(file:Uint8Array, key:string){
         keycrypto,
         f.data.buffer
     ))
-}
-
-function DecryptOld(file:Uint8Array, key:string): Uint8Array{
-    const f = deserialize(file)
-    if(f.data === null || f.salt === null){
-        throw 'data is null'
-    }
-    const MainFile:Buffer = f.data.buffer
-    const salt:Buffer = f.salt.buffer
-    const keys = hashKey(key + salt.toString('base64'))
-    const aesCtr = new ModeOfOperation.ctr(keys, new Counter(ctr));
-    const returnFile = aesCtr.decrypt(MainFile)
-    return returnFile
 }
