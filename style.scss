@@ -1,45 +1,33 @@
-@charset "UTF-8";
-body {
+body{
   overflow-y: hidden;
   overflow-x: hidden !important;
 }
-
 :root {
   --main-width: 40vw;
   --sub-width: calc(var(--main-width) / 2 - 10px);
 }
-
-#password {
+#password{
   width: var(--main-width);
   text-align: center;
-}
 
+}
 .outer {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
   width: 100vw;
 }
-
-button {
+button{
   width: var(--sub-width);
 }
-
-#en {
+#en{
   margin-right: 5px;
 }
-
-#de {
+#de{
   margin-left: 5px;
 }
-
-.topmar {
+.topmar{
   margin-top: 40vh;
 }
-
 .filebox label {
   display: inline-block;
   padding: .5em .75em;
@@ -56,34 +44,30 @@ button {
   text-align: center;
   vertical-align: middle;
 }
-
-progress {
+progress{
   width: var(--main-width);
 }
 
-.filebox input[type="file"] {
-  /* 파일 필드 숨기기 */
+.filebox input[type="file"] {  /* 파일 필드 숨기기 */
   position: absolute;
   width: 1px;
   height: 1px;
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip:rect(0,0,0,0);
   border: 0;
 }
-
-.filebox {
+.filebox{
   margin-bottom: 6px;
 }
-
-#win {
+#win{
   position: absolute;
   top: 20px;
   left: 20px;
 }
 
-#cas {
+#cas{
   text-align: center;
 }
 
@@ -98,9 +82,10 @@ progress {
   background-color: white;
   visibility: hidden;
   overflow-y: scroll;
+
 }
 
-#help {
+#help{
   position: absolute;
   bottom: 20px;
   right: 20px;
@@ -113,7 +98,5 @@ progress {
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  -webkit-transition: 0.5s;
   transition: 0.5s;
 }
-/*# sourceMappingURL=style.css.map */

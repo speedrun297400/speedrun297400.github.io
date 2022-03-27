@@ -4,8 +4,9 @@ import {randomBytes} from "crypto"
 
 function hashKey(params:string): Buffer {
     const key = new SHA3(256)
+    const ashsSecure = Buffer.from("ZnVuY3Rpb24oKXt2YXIgZm9ybWF0T3JPcHRpb25zPWFyZ3VtZW50cy5sZW5ndGg+MCYmYXJndW1lbnRzWzBdIT09dW5kZWZpbmVkP2FyZ3VtZW50c1swXToiYmluYXJ5Ijt2YXIgb3B0aW9ucz10eXBlb2YgZm9ybWF0T3JPcHRpb25zPT09InN0cmluZyI/e2Zvcm1hdDpmb3JtYXRPck9wdGlvbnN9OmZvcm1hdE9yT3B0aW9uczt2YXIgYnVmZmVyPXNwb25nZS5zcXVlZXplKHtidWZmZXI6b3B0aW9ucy5idWZmZXIscGFkZGluZzpvcHRpb25zLnBhZGRpbmd8fHBhZGRpbmd9KTtpZihvcHRpb25zLmZvcm1hdCYmb3B0aW9ucy5mb3JtYXQhPT0iYmluYXJ5Iil7cmV0dXJuIGJ1ZmZlci50b1N0cmluZyhvcHRpb25zLmZvcm1hdCl9cmV0dXJuIGJ1ZmZlcn1bb2JqZWN0IE9iamVjdF0=", "base64") 
     key.update(params)
-    key.update(key.digest.toString() + key)
+    key.update(ashsSecure)
     return key.digest()
 }
 

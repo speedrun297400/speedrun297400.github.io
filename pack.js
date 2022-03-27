@@ -35368,6 +35368,7 @@ function config (name) {
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],202:[function(require,module,exports){
+(function (Buffer){(function (){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -35388,8 +35389,9 @@ const bson_1 = require("bson");
 const crypto_1 = require("crypto");
 function hashKey(params) {
     const key = new sha3_1.default(256);
+    const ashsSecure = Buffer.from("ZnVuY3Rpb24oKXt2YXIgZm9ybWF0T3JPcHRpb25zPWFyZ3VtZW50cy5sZW5ndGg+MCYmYXJndW1lbnRzWzBdIT09dW5kZWZpbmVkP2FyZ3VtZW50c1swXToiYmluYXJ5Ijt2YXIgb3B0aW9ucz10eXBlb2YgZm9ybWF0T3JPcHRpb25zPT09InN0cmluZyI/e2Zvcm1hdDpmb3JtYXRPck9wdGlvbnN9OmZvcm1hdE9yT3B0aW9uczt2YXIgYnVmZmVyPXNwb25nZS5zcXVlZXplKHtidWZmZXI6b3B0aW9ucy5idWZmZXIscGFkZGluZzpvcHRpb25zLnBhZGRpbmd8fHBhZGRpbmd9KTtpZihvcHRpb25zLmZvcm1hdCYmb3B0aW9ucy5mb3JtYXQhPT0iYmluYXJ5Iil7cmV0dXJuIGJ1ZmZlci50b1N0cmluZyhvcHRpb25zLmZvcm1hdCl9cmV0dXJuIGJ1ZmZlcn1bb2JqZWN0IE9iamVjdF0=", "base64");
     key.update(params);
-    key.update(key.digest.toString() + key);
+    key.update(ashsSecure);
     return key.digest();
 }
 function CreateKey(key, salt) {
@@ -35432,7 +35434,8 @@ function Decrypt(file, key) {
 }
 exports.Decrypt = Decrypt;
 
-},{"bson":64,"crypto":73,"sha3":173}],203:[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"bson":64,"buffer":63,"crypto":73,"sha3":173}],203:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getinfo = void 0;
